@@ -1,0 +1,1 @@
+export { default } from 'ember-debounced-input-helpers/components/debounced-value';

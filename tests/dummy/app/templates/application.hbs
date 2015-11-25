@@ -1,3 +1,17 @@
 <h2 id="title">Welcome to Ember</h2>
 
 {{outlet}}
+
+{{debounced-input val=inputValue}}
+{{inputValue}}
+<br>
+<br>
+{{debounced-textarea val=textareaValue}}
+{{textareaValue}}
+
+<br>
+<br>
+{{#debounced-value val=valueValue as |value|}}
+  {{input value=value}}
+{{/debounced-value}}
+{{valueValue}}
