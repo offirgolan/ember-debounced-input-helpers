@@ -32,6 +32,9 @@ export default Ember.Mixin.create({
 
   init() {
     this._super(...arguments);
+
+    // Handle initial value
+    this.set('value', this.get('val'));
     addObserver(this, this._key, this, this._keyChanged);
   },
 

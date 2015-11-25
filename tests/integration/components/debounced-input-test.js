@@ -35,3 +35,9 @@ test('debounced input', function(assert) {
     done2();
   }, 500);
 });
+
+test('debounced input - initial value', function(assert) {
+  this.set('debounced', 'foo');
+  this.render(hbs`{{debounced-input value=value val=debounced wait=500}} rendered: {{debounced}}`);
+  assert.equal(this.$().text().trim(), 'rendered: foo');
+});
