@@ -2,6 +2,8 @@ import Ember from 'ember';
 
 const {
   run,
+  isEqual,
+  observer,
   addObserver,
   removeObserver
 } = Ember;
@@ -12,6 +14,7 @@ export default Ember.Mixin.create({
    * @type {Number}
    */
   wait: 500,
+
   /**
    * Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to false.
    * @type {Boolean}
@@ -19,41 +22,53 @@ export default Ember.Mixin.create({
   immediate: false,
 
   /**
-   * Bound property to be set after the specified key changes
-   * @type {String}
+   * Usually debounced properties are one way, if you plan to manually update val, this will keep val and value in sync
+   * @type {Boolean}
+   */
+  sync: false,
+
+  /**
+   * Bound value to be debounced
    */
   val: null,
 
   /**
-   * The key to observe
-   * @type {String}
+   * Raw value
    */
-  _key: 'value',
+  value: null,
 
   init() {
     this._super(...arguments);
-
-    // Handle initial value
     this.set('value', this.get('val'));
-    addObserver(this, this._key, this, this._keyChanged);
+    if(this.sync) {
+      addObserver(this, 'val', this, this._sync);
+    }
   },
 
-  _keyChanged() {
-    this._pid = run.debounce(this, this._setKey, this.wait, this.immediate);
+  onValueChange: observer('value', function() {
+    this._valuePid = run.debounce(this, this._setVal, this.wait, this.immediate);
+  }),
+
+  _sync() {
+    if(!this.isDestroying && !this.isDestroyed && !isEqual(this.get('val'), this.get('value'))) {
+      this.set('value', this.get('val'));
+    }
   },
 
-  _setKey() {
+  _setVal() {
     if(!this.isDestroying && !this.isDestroyed) {
-      this.set('val', this.get(this._key));
+      this.set('val', this.get('value'));
     }
   },
 
   /**
-   * Cleanup by canceling any current debounce and removing the observer
+   * Cleanup by canceling any current debounce
    */
   willDestroy() {
     this._super(...arguments);
-    run.cancel(this._pid);
-    removeObserver(this, this._key, this, this._keyChanged);
+    run.cancel(this._valuePid);
+    if(this.sync) {
+      removeObserver(this, 'val', this, this._sync);
+    }
   }
 });

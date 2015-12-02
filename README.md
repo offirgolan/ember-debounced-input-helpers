@@ -16,30 +16,31 @@ If it is a bug [please open an issue on GitHub](http://github.com/offirgolan/emb
 
 ### Common Options
 
-- `val`: The bound property to be set after the specified key changes
+- `val`: The bound value to be debounced
 - `wait`: Number of milliseconds to wait. Defaults to 500
-- `immediate`: Trigger the function on the leading instead of the trailing edge of the wait interval. Defaults to false.
+- `immediate`: Trigger the setting val on the leading instead of the trailing edge of the wait interval. Defaults to false.
+- `sync`:Usually debounced properties are one way, if you plan to manually update val, this will keep val and value in sync. Defaults to false.
 
 
 ### debounced-input
 Extended from `Ember.TextField` which allows it to take any of the attributes listed [here](http://guides.emberjs.com/v1.10.0/templates/input-helpers/#toc_text-fields)
 
 ```hbs
-{{debounced-input val=val wait=500 immediate=false}}
+{{debounced-input val=val wait=500 immediate=false sync=true}}
 ```
 
 ### debounced-textarea
 Extended from `Ember.TextArea` which allows it to take any of the attributes listed [here](http://guides.emberjs.com/v1.10.0/templates/input-helpers/#toc_text-areas)
 
 ```hbs
-{{debounced-textarea val=val wait=500 immediate=false}}
+{{debounced-textarea val=val wait=500 immediate=false sync=true}}
 ```
 
 ### debounced-value
 There are many times where you might have your own input component or you're using a 3rd party addon that needs to be debounced.
 
 ```hbs
-{{#debounced-value val=date wait=500 immediate=false as |value|}}
+{{#debounced-value val=date wait=500 immediate=false sync=true as |value|}}
   {{date-picker startDate=value}}
 {{/debounced-value}}
 ```
